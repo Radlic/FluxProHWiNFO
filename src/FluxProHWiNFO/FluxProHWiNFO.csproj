@@ -17,4 +17,11 @@
     <PackageReference Include="HidSharp" Version="2.6.4" />
   </ItemGroup>
 
+  <!-- Licence files ship next to the exe (HidSharp's Apache-2.0 licence requires its text to go with the binaries). -->
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Link="LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="..\..\THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="..\..\licenses\HidSharp-LICENSE.txt" Link="licenses\HidSharp-LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

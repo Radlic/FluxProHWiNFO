@@ -97,4 +97,6 @@ This spec was worked out from nishtahir/antec-flux-pro-display (`src/usb.rs`, GP
 - Step 5 done: `DisplayWorker` (background loop, writes every ≤1 s, retries the device every 3 s, reopens after resume, sends one blank frame on exit), tray UI, JSON config with live reload, rolling log, single-instance mutex. Verified on hardware: live CPU value plus GPU dashes; tray Exit shows dashes, then the screen goes dark.
 - Autostart uses the HKCU `Run` value (same as a Startup-folder shortcut: per user, no admin, not elevated, can be disabled in Task Manager), not a scheduled task, because creating a logon task without admin rights often fails.
 - HWiNFO on the target machine was not yet reporting `GPU Temperature` to Gadget, so the RTX 5070 Ti vs integrated Radeon match is still unverified. If both report it, set `gpu.sensorContains` to `"RTX"`.
-- Next: step 6 (README, licence choice with the owner).
+- Step 6 done: README, MIT licence (Copyright (c) 2026 Radlic), THIRD-PARTY-NOTICES.md. HidSharp is **Apache-2.0** (not MIT as noted above); its licence text is in `licenses/` and is copied next to the exe on build and publish.
+- HWiNFO 8.50 menu names confirmed from a screenshot: Sensor Settings → **HWiNFO Gadget** tab, **Enable reporting to Gadget**, **Report value in Gadget**, an **Index** box, and a right-hand column showing Yes/No per row. Dedicated cards are listed as `dGPU [#0]: …`. Values are only published after clicking OK.
+- Next: step 7 (framework-dependent and self-contained publish builds).

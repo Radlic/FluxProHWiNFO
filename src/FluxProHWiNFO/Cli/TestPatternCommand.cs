@@ -10,12 +10,12 @@ namespace FluxProHWiNFO.Cli;
 internal static class TestPatternCommand
 {
     public const string Help = """
-          --test-pattern [options]  Send fixed values to the display once a second
-              --variant <name>      Report framing: id0-pad (default), id0, raw-pad, feature
-              --cpu <value>         CPU value to show (default 12.3)
-              --gpu <value>         GPU value to show (default 45.6)
-              --seconds <n>         How long to keep sending (default 30; 0 = one write)
-          --blank [--variant <name>] Send blanks (EE) for both values once
+          FluxProHWiNFO.exe --test-pattern  Send fixed values to the display once a second
+              --cpu <value>                 CPU value to show (default 12.3)
+              --gpu <value>                 GPU value to show (default 45.6)
+              --seconds <n>                 How long to keep sending (default 30; 0 = one write)
+              --variant <name>              Report framing: id0-pad (default, confirmed working), id0, raw-pad, feature
+          FluxProHWiNFO.exe --blank         Send dashes for both values once
         """;
 
     public static int Run(TextWriter output, string[] args, bool blank)
