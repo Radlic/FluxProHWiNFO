@@ -142,6 +142,7 @@ These are for setup and troubleshooting. In PowerShell, add `| Out-Host` so the 
 **The display shows dashes for one or both values.**
 - Hover over the tray icon or open its menu: it says whether HWiNFO is running and which sensor was matched.
 - Run `--dump-sensors`. If the row you want isn't listed, HWiNFO isn't publishing it: tick **Report value in Gadget** for that row (its right-hand column should read **Yes**) and click **OK** to close Sensor Settings (see step 1). Ticked rows don't appear until you click OK.
+- **A row shows Yes in the Gadget tab but still isn't published?** Check that **monitoring is enabled** for that row in HWiNFO. HWiNFO only publishes rows it is monitoring, so a row whose monitoring was turned off (for example to tidy the Sensors window) stays missing even with "Report value in Gadget" ticked.
 - If the row is listed under a different name, put that name in `labels` in the config.
 - If HWiNFO is closed, both values show dashes until it starts again. The app checks for it every 5 seconds.
 
