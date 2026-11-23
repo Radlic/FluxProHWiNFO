@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>FluxProHWiNFO</AssemblyName>
+    <RootNamespace>FluxProHWiNFO</RootNamespace>
+    <!-- Required by the LibraryImport source generator (P/Invoke marshalling stubs). -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>Shows HWiNFO64 CPU and GPU temperatures on the Antec Flux Pro case display.</Description>
+  </PropertyGroup>
+
+</Project>

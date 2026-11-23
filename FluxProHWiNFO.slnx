@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FluxProHWiNFO/FluxProHWiNFO.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FluxProHWiNFO.Tests/FluxProHWiNFO.Tests.csproj" />
+  </Folder>
+</Solution>
