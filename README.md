@@ -14,6 +14,7 @@ By [Radlic](https://github.com/Radlic). MIT licence.
 - Windows 10 or 11, 64-bit.
 - An Antec Flux Pro case with its temperature display connected to an internal USB header.
 - [HWiNFO64](https://www.hwinfo.com/) (the free version is fine). Tested with HWiNFO64 8.50.
+- For the small download only: the [.NET 10 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/10.0) (x64). The self-contained download needs nothing extra.
 - To build from source: the [.NET 10 SDK](https://dotnet.microsoft.com/download).
 
 > **Don't run Antec iUnity or FluxProDisplay at the same time.** Only one program can drive the display; two will fight over it and the numbers will flicker between them.
@@ -43,9 +44,19 @@ You should see `Sensor0`, `Label0`, `ValueRaw0` and so on, one group per ticked 
 .\FluxProHWiNFO.exe --dump-sensors | Out-Host
 ```
 
-## 2. Run FluxProHWiNFO
+## 2. Install and run FluxProHWiNFO
 
-Start `FluxProHWiNFO.exe`. A thermometer icon appears in the system tray (it may be under the **^** overflow arrow), and the display lights up with your temperatures.
+There are two downloads. Both contain the same app as a single `FluxProHWiNFO.exe`:
+
+| Download | Size | Use it if |
+|---|---|---|
+| `FluxProHWiNFO-<version>-win-x64.zip` | under 1 MB | you have the .NET 10 Desktop Runtime installed, or don't mind installing it (if it's missing, the app shows a message with a download link when you start it) |
+| `FluxProHWiNFO-<version>-win-x64-selfcontained.zip` | about 44 MB (111 MB unzipped) | you want it to just run, with nothing else to install |
+
+Both use about 20 MB of memory while running.
+
+1. Extract the zip to a folder where it can stay, for example `%LOCALAPPDATA%\Programs\FluxProHWiNFO`. Don't run it from inside the zip or from Downloads if you plan to start it with Windows: the startup entry points at the exe's location.
+2. Start `FluxProHWiNFO.exe`. The exe isn't code-signed, so Windows may show "Windows protected your PC" the first time: click **More info**, then **Run anyway**. A thermometer icon appears in the system tray (it may be under the **^** overflow arrow), and the display lights up with your temperatures.
 
 Run it as your normal user, **not** "as administrator": HWiNFO writes its values to your own user's registry, and the app must read them as the same user.
 
@@ -173,6 +184,14 @@ dotnet test
 ```
 
 The app is `src\FluxProHWiNFO\bin\Debug\net10.0-windows\FluxProHWiNFO.exe`.
+
+To build both release zips (it runs the tests first) into `publish\`:
+
+```powershell
+.\build\publish.ps1
+```
+
+The version number comes from `Directory.Build.props`. The self-contained exe is deliberately not compressed: compression would make it 49 MB instead of 111 MB on disk, but it triples the memory the always-running app uses (from about 20 MB to about 60 MB), and the zip compresses the download anyway.
 
 ## How it talks to the display
 
