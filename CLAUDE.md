@@ -90,4 +90,7 @@ This spec was worked out from nishtahir/antec-flux-pro-display (`src/usb.rs`, GP
 7. Publish framework-dependent and self-contained builds.
 
 ## Status
-- Research done, no code written yet.
+- Steps 1–4 done: solution scaffolded (net10.0-windows), payload encoder, HWiNFO VSB reader with `--dump-sensors`, HID writer with `--hid-info`, `--test-pattern` and `--blank`.
+- **Confirmed on real hardware (2026-11-23):** the display enumerates as one HID interface, vendor usage page `0xFF00`, no report IDs, output report 65 bytes (1 report-ID byte + 64 data), no feature reports. The working framing is `id0-pad`: `0x00` report ID + 12-byte payload + zero padding to 65 bytes, written with HidSharp `HidStream.Write`. Test pattern 12.3 / 45.6 displayed correctly.
+- The device returns junk for its manufacturer/product strings (`Љ`), so don't rely on them.
+- Next: step 5 (polling loop, tray UI, config, logging, autostart).

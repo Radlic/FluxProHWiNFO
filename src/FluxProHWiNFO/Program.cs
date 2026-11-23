@@ -4,12 +4,14 @@ namespace FluxProHWiNFO;
 
 static class Program
 {
-    private const string Usage = """
+    private static readonly string Usage = $"""
         FluxProHWiNFO - HWiNFO64 temperatures on the Antec Flux Pro display
 
         Usage:
           FluxProHWiNFO.exe                 Run the tray app (not implemented yet)
           FluxProHWiNFO.exe --dump-sensors  List every sensor HWiNFO reports to Gadget, and the default matches
+          FluxProHWiNFO.exe --hid-info      Show the display's HID capabilities (writes nothing)
+        {TestPatternCommand.Help}
           FluxProHWiNFO.exe --help          Show this help
 
         Tip: in PowerShell, pipe to Out-Host so the prompt waits for the output:
@@ -26,6 +28,12 @@ static class Program
             {
                 case "--dump-sensors":
                     return DumpSensorsCommand.Run(Console.Out);
+                case "--hid-info":
+                    return HidInfoCommand.Run(Console.Out);
+                case "--test-pattern":
+                    return TestPatternCommand.Run(Console.Out, args, blank: false);
+                case "--blank":
+                    return TestPatternCommand.Run(Console.Out, args, blank: true);
                 case "--help" or "-h" or "/?":
                     Console.WriteLine(Usage);
                     return 0;
