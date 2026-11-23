@@ -81,7 +81,7 @@ internal static class TestPatternCommand
             }
             while (DateTime.UtcNow - started < TimeSpan.FromSeconds(seconds));
 
-            output.WriteLine($"Done: {writes} write(s) without error. The display keeps whatever it shows now.");
+            output.WriteLine($"Done: {writes} write(s) without error. The display goes dark about 2 s after the last write.");
             return 0;
         }
         catch (Exception ex)
