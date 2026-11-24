@@ -5,7 +5,7 @@
     <Product>FluxProHWiNFO</Product>
     <Copyright>Copyright © 2026 Radlic</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 </Project>

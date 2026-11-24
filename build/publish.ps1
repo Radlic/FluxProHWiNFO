@@ -8,6 +8,10 @@
     - FluxProHWiNFO-<version>-win-x64-selfcontained.zip
         Larger single-file exe with the .NET runtime built in. Runs on any Windows 10/11 x64 PC.
 
+    - FluxProHWiNFO-<version>-win-x64-setup.exe
+        Setup wizard (Inno Setup 6) for the self-contained build: install for me only, or for all users.
+        Skipped with a warning when Inno Setup 6 isn't installed.
+
     Each zip holds the exe, README.md, LICENSE.txt, THIRD-PARTY-NOTICES.md and licenses\.
     The version comes from Directory.Build.props.
 
@@ -90,4 +94,25 @@ foreach ($v in $variants) {
 
     $exe = Get-Item (Join-Path $dir 'FluxProHWiNFO.exe')
     Write-Host ("  exe {0:N1} MB, zip {1:N1} MB -> {2}" -f ($exe.Length / 1MB), ((Get-Item $zip).Length / 1MB), $zip) -ForegroundColor Green
+    if ($v.SelfContained) { $selfContainedDir = $dir }
 }
+
+# Installer: wraps the self-contained build, so it needs nothing else installed. Needs Inno Setup 6.
+$iscc = @(
+    (Join-Path $env:LOCALAPPDATA 'Programs\Inno Setup 6\ISCC.exe'),
+    (Join-Path $env:ProgramFiles 'Inno Setup 6\ISCC.exe'),
+    (Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6\ISCC.exe'),
+    (Get-Command ISCC.exe -ErrorAction SilentlyContinue).Source
+) | Where-Object { $_ -and (Test-Path $_) } | Select-Object -First 1
+
+if (-not $iscc) {
+    Write-Warning 'Inno Setup 6 not found; skipping the installer. Install it (winget install JRSoftware.InnoSetup) to build one.'
+    return
+}
+
+Write-Host 'Building installer...' -ForegroundColor Cyan
+$setup = Join-Path $outRoot "FluxProHWiNFO-$version-$Runtime-setup.exe"
+if (Test-Path $setup) { Remove-Item $setup -Force }
+& $iscc /Q "/DAppVersion=$version" "/DSourceDir=$selfContainedDir" "/O$outRoot" (Join-Path $root 'installer\FluxProHWiNFO.iss')
+if ($LASTEXITCODE -ne 0) { throw 'Building the installer failed.' }
+Write-Host ("  setup {0:N1} MB -> {1}" -f ((Get-Item $setup).Length / 1MB), $setup) -ForegroundColor Green

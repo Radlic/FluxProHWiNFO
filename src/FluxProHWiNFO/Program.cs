@@ -2,6 +2,7 @@ using FluxProHWiNFO.Cli;
 using FluxProHWiNFO.Config;
 using FluxProHWiNFO.Core;
 using FluxProHWiNFO.Logging;
+using FluxProHWiNFO.Startup;
 using FluxProHWiNFO.Tray;
 
 namespace FluxProHWiNFO;
@@ -25,12 +26,16 @@ static class Program
     [STAThread]
     static int Main(string[] args)
     {
-        if (args.Length > 0)
+        // --background: started by a Run entry at sign-in. Same as no arguments, but quiet if already running.
+        bool background = args is [var only] && only.Equals(RunCommand.BackgroundArg, StringComparison.OrdinalIgnoreCase);
+        if (args.Length > 0 && !background)
             return RunCli(args);
 
         using var mutex = new Mutex(initiallyOwned: true, AppInfo.MutexName, out bool firstInstance);
         if (!firstInstance)
         {
+            if (background)
+                return 0;
             ApplicationConfiguration.Initialize();
             MessageBox.Show($"{AppInfo.Name} is already running. Look for its thermometer icon in the system tray.",
                 AppInfo.Name, MessageBoxButtons.OK, MessageBoxIcon.Information);

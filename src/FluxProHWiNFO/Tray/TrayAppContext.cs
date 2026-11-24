@@ -52,6 +52,7 @@ internal sealed class TrayAppContext : ApplicationContext
             new ToolStripMenuItem("Exit", null, (_, _) => Exit()),
         });
         _menu.Opening += (_, _) => RefreshMenu();
+        _menu.ShowItemToolTips = true;
 
         _notifyIcon = new NotifyIcon
         {
@@ -60,6 +61,8 @@ internal sealed class TrayAppContext : ApplicationContext
             Text = $"{AppInfo.Name}: starting",
             Visible = true,
         };
+
+        RemoveDuplicateAutostart();
 
         _worker.StatusChanged += OnStatusChanged;
         SystemEvents.PowerModeChanged += OnPowerModeChanged;
@@ -123,6 +126,28 @@ internal sealed class TrayAppContext : ApplicationContext
         _configErrorItem.Visible = s?.ConfigError is not null;
         _configErrorItem.Text = $"Config error, using previous settings: {Truncate(s?.ConfigError ?? "", 80)}";
 
+        RefreshAutostartItem();
+    }
+
+    private void RefreshAutostartItem()
+    {
+        bool allUsers;
+        try { allUsers = Autostart.IsEnabledForAllUsers(); }
+        catch (Exception) { allUsers = false; }
+
+        if (allUsers)
+        {
+            // Set by an "all users" install; changing it needs admin rights, so the toggle is locked.
+            _autostartItem.Text = "Start with Windows: on for all users";
+            _autostartItem.ToolTipText = "Set by the installer. To change it, run Setup again and untick Start with Windows.";
+            _autostartItem.Checked = true;
+            _autostartItem.Enabled = false;
+            return;
+        }
+
+        _autostartItem.Text = "Start with Windows";
+        _autostartItem.ToolTipText = null;
+        _autostartItem.Enabled = true;
         try { _autostartItem.Checked = Autostart.IsEnabled(); }
         catch (Exception) { _autostartItem.Checked = false; }
     }
@@ -150,10 +175,32 @@ internal sealed class TrayAppContext : ApplicationContext
     private static string Truncate(string text, int max) =>
         text.Length <= max ? text : text[..(max - 1)] + "…";
 
+    /// <summary>
+    /// An all-users entry makes this user's own entry redundant. Remove it, so sign-in doesn't start two
+    /// copies (the second would exit, but an entry from 0.1.0 has no --background and would show a message box).
+    /// </summary>
+    private static void RemoveDuplicateAutostart()
+    {
+        try
+        {
+            if (Autostart.IsEnabledForAllUsers() && Autostart.HasUserEntry())
+            {
+                Autostart.Disable();
+                Log.Info("Start with Windows is on for all users; removed this user's duplicate entry");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Checking Start with Windows entries failed", ex);
+        }
+    }
+
     private void ToggleAutostart()
     {
         try
         {
+            if (Autostart.IsEnabledForAllUsers())
+                return; // the menu item is disabled in this state; nothing to toggle per user
             if (Autostart.IsEnabled())
             {
                 Autostart.Disable();

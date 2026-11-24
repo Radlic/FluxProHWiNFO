@@ -46,17 +46,35 @@ You should see `Sensor0`, `Label0`, `ValueRaw0` and so on, one group per ticked 
 
 ## 2. Install and run FluxProHWiNFO
 
-There are two downloads. Both contain the same app as a single `FluxProHWiNFO.exe`:
+There are three downloads. All contain the same app as a single `FluxProHWiNFO.exe`:
 
 | Download | Size | Use it if |
 |---|---|---|
-| `FluxProHWiNFO-<version>-win-x64.zip` | under 1 MB | you have the .NET 10 Desktop Runtime installed, or don't mind installing it (if it's missing, the app shows a message with a download link when you start it) |
-| `FluxProHWiNFO-<version>-win-x64-selfcontained.zip` | about 44 MB (111 MB unzipped) | you want it to just run, with nothing else to install |
+| `FluxProHWiNFO-<version>-win-x64-setup.exe` | about 33 MB | you want a normal setup wizard with a Start menu entry and an uninstaller. Nothing else to install. |
+| `FluxProHWiNFO-<version>-win-x64-selfcontained.zip` | about 44 MB (111 MB unzipped) | you want a portable copy with nothing else to install |
+| `FluxProHWiNFO-<version>-win-x64.zip` | under 1 MB | you want a portable copy and have the .NET 10 Desktop Runtime installed, or don't mind installing it (if it's missing, the app shows a message with a download link when you start it) |
 
-Both use about 20 MB of memory while running.
+All use about 20 MB of memory while running.
+
+### With the setup wizard
+
+1. Run `FluxProHWiNFO-<version>-win-x64-setup.exe`. Setup isn't code-signed, so Windows may show "Windows protected your PC": click **More info**, then **Run anyway**.
+2. Choose who to install for:
+   - **Install for me only** (the default) needs no admin rights. It installs to `%LOCALAPPDATA%\Programs\FluxProHWiNFO` and adds a Start menu entry for you.
+   - **Install for all users** asks for admin rights (UAC). It installs to `C:\Program Files\FluxProHWiNFO` and adds a Start menu entry for everyone on the PC.
+3. Leave **Start with Windows** ticked if you want it to start when you sign in (with **all users**, it starts for everyone who signs in).
+4. Leave **Start FluxProHWiNFO now** ticked on the last page. Even after an all-users install, the app starts as you, not as administrator.
+
+If the app is already running (for example when upgrading), Setup asks you to exit it first: tray icon → **Exit**, then click **OK** in Setup.
+
+### Portable (zip)
 
 1. Extract the zip to a folder where it can stay, for example `%LOCALAPPDATA%\Programs\FluxProHWiNFO`. Don't run it from inside the zip or from Downloads if you plan to start it with Windows: the startup entry points at the exe's location.
-2. Start `FluxProHWiNFO.exe`. The exe isn't code-signed, so Windows may show "Windows protected your PC" the first time: click **More info**, then **Run anyway**. A thermometer icon appears in the system tray (it may be under the **^** overflow arrow), and the display lights up with your temperatures.
+2. Start `FluxProHWiNFO.exe`. The exe isn't code-signed, so Windows may show "Windows protected your PC" the first time: click **More info**, then **Run anyway**.
+
+### Either way
+
+A thermometer icon appears in the system tray (it may be under the **^** overflow arrow), and the display lights up with your temperatures. Each Windows user has their own config and log in `%APPDATA%\FluxProHWiNFO`, and needs their own HWiNFO set up as in step 1.
 
 Run it as your normal user, **not** "as administrator": HWiNFO writes its values to your own user's registry, and the app must read them as the same user.
 
@@ -78,9 +96,13 @@ Hover over the icon for the current values. Right-click it for:
 
 ### Start with Windows
 
-Tick **Start with Windows** in the tray menu. This adds the app to your user's startup list (the `HKCU\...\CurrentVersion\Run` registry entry, the same thing a Startup-folder shortcut does). It needs no admin rights and doesn't run elevated. You can also turn it off in **Task Manager → Startup apps**.
+Tick **Start with Windows** in the tray menu. This adds the app to your user's startup list (the `HKCU\...\CurrentVersion\Run` registry entry, the same thing a Startup-folder shortcut does) and marks it **Enabled** in Task Manager's startup list. It needs no admin rights and doesn't run elevated. You can also turn it off in **Task Manager → Startup apps**.
+
+If you used version 0.1.0, tick **Start with Windows** again (it may already show as unticked). 0.1.0 added the startup entry without marking it Enabled, and on at least some Windows 11 builds such an entry is skipped at sign-in.
 
 If you move the exe, tick it again so the entry points at the new location.
+
+After an **all users** install with Start with Windows ticked, the entry is in `HKLM\...\CurrentVersion\Run` instead. It starts the app for every user who signs in, still as that user and not elevated. The tray menu then shows **Start with Windows: on for all users**, greyed out, because changing it needs admin rights. To change it, run Setup again and untick the box.
 
 ## What the display shows
 
@@ -172,6 +194,10 @@ These are for setup and troubleshooting. In PowerShell, add `| Out-Host` so the 
 
 ## Uninstall
 
+**Installed with Setup:** exit the app (tray icon → **Exit**), then uninstall **FluxProHWiNFO** from **Settings → Apps → Installed apps**. This removes the program, its Start menu entry and its Start with Windows entry. Your config and log stay in `%APPDATA%\FluxProHWiNFO`; delete that folder too if you want them gone. After an all-users install, other users who turned on Start with Windows from their own tray menu keep a harmless leftover entry in Task Manager → Startup apps.
+
+**Portable copy:**
+
 1. Untick **Start with Windows** in the tray menu, then choose **Exit**.
 2. Delete the program folder.
 3. Delete `%APPDATA%\FluxProHWiNFO` to remove the config and log.
@@ -185,11 +211,13 @@ dotnet test
 
 The app is `src\FluxProHWiNFO\bin\Debug\net10.0-windows\FluxProHWiNFO.exe`.
 
-To build both release zips (it runs the tests first) into `publish\`:
+To build the release downloads (it runs the tests first) into `publish\`:
 
 ```powershell
 .\build\publish.ps1
 ```
+
+The setup wizard is built from `installer\FluxProHWiNFO.iss` and needs [Inno Setup 6](https://jrsoftware.org/isinfo.php) (`winget install JRSoftware.InnoSetup`). Without it, the script builds the two zips and skips Setup with a warning.
 
 The version number comes from `Directory.Build.props`. The self-contained exe is deliberately not compressed: compression would make it 49 MB instead of 111 MB on disk, but it triples the memory the always-running app uses (from about 20 MB to about 60 MB), and the zip compresses the download anyway.
 
