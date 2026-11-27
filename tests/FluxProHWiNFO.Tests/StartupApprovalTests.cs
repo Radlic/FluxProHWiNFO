@@ -27,5 +27,5 @@ public class StartupApprovalTests
     public void DisabledOrEmpty_IsNotEnabled(byte[] value) => Assert.False(StartupApproval.IsEnabled(value));
 
     [Fact]
-    public void Missing_IsNotEnabled() => Assert.False(StartupApproval.IsEnabled(null));
+    public void Missing_IsEnabled() => Assert.True(StartupApproval.IsEnabled(null));
 }

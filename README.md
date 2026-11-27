@@ -98,8 +98,6 @@ Hover over the icon for the current values. Right-click it for:
 
 Tick **Start with Windows** in the tray menu. This adds the app to your user's startup list (the `HKCU\...\CurrentVersion\Run` registry entry, the same thing a Startup-folder shortcut does) and marks it **Enabled** in Task Manager's startup list. It needs no admin rights and doesn't run elevated. You can also turn it off in **Task Manager → Startup apps**.
 
-If you used version 0.1.0, tick **Start with Windows** again (it may already show as unticked). 0.1.0 added the startup entry without marking it Enabled, and on at least some Windows 11 builds such an entry is skipped at sign-in.
-
 If you move the exe, tick it again so the entry points at the new location.
 
 After an **all users** install with Start with Windows ticked, the entry is in `HKLM\...\CurrentVersion\Run` instead. It starts the app for every user who signs in, still as that user and not elevated. The tray menu then shows **Start with Windows: on for all users**, greyed out, because changing it needs admin rights. To change it, run Setup again and untick the box.

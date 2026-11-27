@@ -10,9 +10,9 @@ namespace FluxProHWiNFO.Startup;
 /// <item>All users (HKLM): written only by an "all users" install. The app reads it but never writes it,
 ///       because writing HKLM needs admin rights.</item>
 /// </list>
-/// Measured 2026-11-24 on Windows 11 build 26300: at sign-in, Windows ran only Run entries with an
-/// "enabled" approval value. An entry with no approval value at all was skipped. So Enable() writes one,
-/// the same thing Task Manager's Enable does, and an entry without one counts as off.
+/// Enable() writes the "enabled" approval value, the same thing Task Manager's Enable does, so ticking the
+/// toggle also undoes an earlier Disable in Task Manager. An entry with no approval value counts as on,
+/// as it does for Windows.
 /// Even from an HKLM entry, Windows starts the app as the signed-in user, not elevated.
 /// </summary>
 internal static class Autostart

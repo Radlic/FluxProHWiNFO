@@ -11,8 +11,8 @@ public static class StartupApproval
     public static byte[] Enabled => [0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
     /// <summary>
-    /// True for an "enabled" value. A missing value counts as not enabled: Windows 11 build 26300 skipped
-    /// such an entry at sign-in.
+    /// True unless Task Manager marked the entry disabled. A missing value counts as enabled, as it does for
+    /// Windows: most apps never write one, and their Run entries still start at sign-in.
     /// </summary>
-    public static bool IsEnabled(byte[]? value) => value is { Length: > 0 } && (value[0] & 1) == 0;
+    public static bool IsEnabled(byte[]? value) => value is null || (value.Length > 0 && (value[0] & 1) == 0);
 }

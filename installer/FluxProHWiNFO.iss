@@ -21,8 +21,8 @@
 #define AppExe "FluxProHWiNFO.exe"
 #define AppUrl "https://github.com/Radlic/FluxProHWiNFO"
 #define RunKey "Software\Microsoft\Windows\CurrentVersion\Run"
-; Task Manager's Enabled/Disabled state for each Run entry. Windows 11 build 26300 skipped a Run entry
-; that had no value here, so Setup writes the "enabled" value (02 + 11 zero bytes) along with the entry.
+; Task Manager's Enabled/Disabled state for each Run entry. Setup writes the "enabled" value (02 + 11 zero
+; bytes) along with the entry, so a reinstall also undoes an earlier Disable in Task Manager.
 #define ApprovedKey "Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"
 
 [Setup]
